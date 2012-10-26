@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+import getpass
+import requests
+
+username = ""
+password = ""
+albums = []
+
+
+def get_album_count():
+    """
+    This will help us compute how many times we have to make an API call.
+    """
+    url = "http://%s.multiply.com/api/read.json?type=photos&password=%s" % (username, password)
+    r = requests.post(url).json
+    return r['total_items'] - 1
+
+
+def get_album(album_index):
+    """
+    Accepts the album's index in our global list named albums.
+    """
+    album_key = albums[album_index]['value']['item_key']
+    print album_key
+    """
+    print "album['subject'] == %s" % (i, album['subject'])
+    print "album['num_photos'] == %d" % album['num_photos']
+    print "album['summary'] == %s" % album['summary']
+    print "album['item_key'] == %s" % album['item_key']
+    """
+    url = "http://%s.multiply.com/api/read.json?item_key=%s&password=%s" % (username, album_key, password)
+    album = requests.post(url).json
+    print "Description :\n%s" % album['body']
+    print "Created date : %s" % album['created_date']
+    print "Number of photos: %s" % album['num_photos']
+    print "Number of replies: %s" % album['num_replies']
+    print "Tags : "
+    for tag in album['tags']:
+        print "  - %s" % tag['tag']
+
+    i = 1
+    print "Photo URLs: "
+    for photo_item in album['photos']:
+        photo = photo_item['value']
+        print "%03d - %s" % (i, photo['src'])
+        photo_dl = requests.get(photo['src'])
+        filename = "%3d.jpg" % i
+        with open(filename, "wb") as photo_file:
+            photo_file.write(photo_dl.content)
+        i += 1
+        
+
+def get_album_list(start):
+    """
+    Gets the list of photo albums.
+    """
+    url = "http://%s.multiply.com/api/read.json?type=photos&password=%s&start=%s" % (username, password, start)
+    r = requests.post(url).json
+    items = r['items']
+    return items
+
+
+def main():
+    global username 
+    global password
+    global albums
+    username = raw_input("Username: ")
+    password = getpass.getpass("Password: ")
+
+    album_count = get_album_count()
+    print "You have %d albums." % album_count
+
+    while (len(albums) != album_count):
+        albums += get_album_list(len(albums))
+
+    # Because normal people aren't used to 0-relative counts.
+    i = 1
+    for album_item in albums:
+        album = album_item['value']
+        print "%03d - %s (%d photos)" % (i, album['subject'], album['num_photos'])
+        i = i + 1
+
+    target_album = raw_input("Enter # of album you want to download: ")
+
+    get_album(int(target_album) - 1)
+
+    # Calling them item's to be consistent with 
+    # Multiply's weird variable naming convention.
+        #for key, value in album.iteritems() :
+        #    print key#, value
+
+if __name__ == "__main__":
+    main()
