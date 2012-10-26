@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import getpass
 import requests
+import os
 
 username = ""
 password = ""
@@ -42,11 +43,12 @@ def get_album(album_index):
 
     i = 1
     print "Photo URLs: "
+    os.mkdir(album['subject'])
     for photo_item in album['photos']:
         photo = photo_item['value']
         print "%03d - %s" % (i, photo['src'])
         photo_dl = requests.get(photo['src'])
-        filename = "%3d.jpg" % i
+        filename = "%s/%03d.jpg" % (album['subject'], i)
         with open(filename, "wb") as photo_file:
             photo_file.write(photo_dl.content)
         i += 1
