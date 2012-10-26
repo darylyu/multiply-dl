@@ -11,7 +11,8 @@ def get_album_count():
     """
     This will help us compute how many times we have to make an API call.
     """
-    url = "http://%s.multiply.com/api/read.json?type=photos&password=%s" % (username, password)
+    url = "http://%s.multiply.com/api/read.json?type=photos&password=%s" % (
+        username, password)
     r = requests.post(url).json
     return r['total_items'] - 1
 
@@ -28,7 +29,8 @@ def get_album(album_index):
     print "album['summary'] == %s" % album['summary']
     print "album['item_key'] == %s" % album['item_key']
     """
-    url = "http://%s.multiply.com/api/read.json?item_key=%s&password=%s" % (username, album_key, password)
+    url = "http://%s.multiply.com/api/read.json?item_key=%s&password=%s" % (
+        username, album_key, password)
     album = requests.post(url).json
     print "Description :\n%s" % album['body']
     print "Created date : %s" % album['created_date']
@@ -48,7 +50,7 @@ def get_album(album_index):
         with open(filename, "wb") as photo_file:
             photo_file.write(photo_dl.content)
         i += 1
-        
+
 
 def get_album_list(start):
     """
@@ -61,7 +63,7 @@ def get_album_list(start):
 
 
 def main():
-    global username 
+    global username
     global password
     global albums
     username = raw_input("Username: ")
@@ -77,17 +79,13 @@ def main():
     i = 1
     for album_item in albums:
         album = album_item['value']
-        print "%03d - %s (%d photos)" % (i, album['subject'], album['num_photos'])
+        print "%03d - %s (%d photos)" % (
+            i, album['subject'], album['num_photos'])
         i = i + 1
 
     target_album = raw_input("Enter # of album you want to download: ")
 
     get_album(int(target_album) - 1)
-
-    # Calling them item's to be consistent with 
-    # Multiply's weird variable naming convention.
-        #for key, value in album.iteritems() :
-        #    print key#, value
 
 if __name__ == "__main__":
     main()
