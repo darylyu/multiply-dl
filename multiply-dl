@@ -122,3 +122,5 @@ if __name__ == "__main__":
         print "There is a problem with your connection or Multiply."
         print "ERROR: %s" % conn_err
         print "Please try again. The download will continue where it ended."
+    except KeyboardInterrupt as k_int:
+        print "Exiting..."
