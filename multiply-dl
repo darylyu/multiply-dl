@@ -105,9 +105,15 @@ def main():
             i, album['subject'], album['num_photos'])
         i = i + 1
 
-    target_album = raw_input("Enter # of album you want to download: ")
-
-    get_album(int(target_album) - 1)
+    print("Enter the album #s you want to download. Separate with spaces.")
+    albums_input = raw_input("Albums: ")
+    target_albums = albums_input.split()
+    download_count = len(target_albums)
+    i = 0
+    for target_album in target_albums:
+        get_album(int(target_album) - 1)
+        i += 1
+        print "%03d/%03d albums downloaded." % (i, download_count)
 
 if __name__ == "__main__":
     try:
