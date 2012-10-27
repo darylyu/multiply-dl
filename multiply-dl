@@ -105,7 +105,7 @@ def main():
             i, album['subject'], album['num_photos'])
         i = i + 1
 
-    print("Enter the album #s you want to download. Separate with spaces.")
+    print "Enter the album #s you want to download. Separate with spaces."
     albums_input = raw_input("Albums: ")
     target_albums = albums_input.split()
     download_count = len(target_albums)
