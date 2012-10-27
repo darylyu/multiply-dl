@@ -41,17 +41,39 @@ def get_album(album_index):
     for tag in album['tags']:
         print "  - %s" % tag['tag']
 
-    i = 1
+    cont = raw_input("Are you sure you want to download this? (y/n) ")
+    print cont
+    if cont != 'y':
+        exit(1)
+
+    i = 0
     print "Photo URLs: "
-    os.mkdir(album['subject'])
+    if os.path.exists(album['subject']):
+        print "WARNING: The album already exists."
+        print ("We'll start with the last failed download.")
+        cont = raw_input("Continue? (y/n) ")
+        if cont != 'y':
+            exit(1)
+    else:
+        os.mkdir(album['subject'])
+
     for photo_item in album['photos']:
+        i += 1
+        filename = "%s/%03d.jpg" % (album['subject'], i)
+
+        # Check if the file already exists.
+        # This might be useful in case we want to retry
+        # a failed download.
+        if os.path.exists(filename):
+            print "%s already exists. Skipping." % filename
+            continue
+
         photo = photo_item['value']
         print "%03d - %s" % (i, photo['src'])
         photo_dl = requests.get(photo['src'])
-        filename = "%s/%03d.jpg" % (album['subject'], i)
+
         with open(filename, "wb") as photo_file:
             photo_file.write(photo_dl.content)
-        i += 1
 
 
 def get_album_list(start):
@@ -90,4 +112,9 @@ def main():
     get_album(int(target_album) - 1)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except requests.exceptions.ConnectionError as conn_err:
+        print "There is a problem with your connection or Multiply."
+        print "ERROR: %s" % conn_err
+        print "Please try again. The download will continue where it ended."
