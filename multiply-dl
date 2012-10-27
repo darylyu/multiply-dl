@@ -35,20 +35,9 @@ def get_album(album_index):
     for tag in album['tags']:
         print "  - %s" % tag['tag']
 
-    cont = raw_input("Are you sure you want to download this? (y/n) ")
-    print cont
-    if cont != 'y':
-        exit(1)
-
     i = 0
     print "Photo URLs: "
-    if os.path.exists(album['subject']):
-        print "WARNING: The album already exists."
-        print ("We'll start with the last failed download.")
-        cont = raw_input("Continue? (y/n) ")
-        if cont != 'y':
-            exit(1)
-    else:
+    if not os.path.exists(album['subject']):
         os.mkdir(album['subject'])
 
     for photo_item in album['photos']:
@@ -110,6 +99,12 @@ def main():
     target_albums = albums_input.split()
     download_count = len(target_albums)
     i = 0
+
+    print "You are about to download %d album/s." % download_count
+    cont = raw_input("Continue? (y/n) ")
+    if cont != 'y':
+        exit(1)
+
     for target_album in target_albums:
         get_album(int(target_album) - 1)
         i += 1
