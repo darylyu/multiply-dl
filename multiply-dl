@@ -87,6 +87,10 @@ def get_album_list(start):
 
 
 def main():
+    """
+    Asks for the username and password and displays the user's
+    list of albums.
+    """
     global username
     global password
     global albums
