@@ -23,13 +23,6 @@ def get_album(album_index):
     Accepts the album's index in our global list named albums.
     """
     album_key = albums[album_index]['value']['item_key']
-    print album_key
-    """
-    print "album['subject'] == %s" % (i, album['subject'])
-    print "album['num_photos'] == %d" % album['num_photos']
-    print "album['summary'] == %s" % album['summary']
-    print "album['item_key'] == %s" % album['item_key']
-    """
     url = "http://%s.multiply.com/api/read.json?item_key=%s&password=%s" % (
         username, album_key, password)
     album = requests.post(url).json
