@@ -26,6 +26,7 @@ def get_album(album_index):
     url = "http://%s.multiply.com/api/read.json?item_key=%s&password=%s" % (
         username, album_key, password)
     album = requests.post(url).json
+    print "Album :\n%s" % album['subject']
     print "Description :\n%s" % album['body']
     print "Created date : %s" % album['created_date']
     print "Number of photos: %s" % album['num_photos']
@@ -62,7 +63,7 @@ def get_album(album_index):
             continue
 
         photo = photo_item['value']
-        print "%03d - %s" % (i, photo['src'])
+        print "Downloading: %s - %03d/%03d" % (album['subject'], i, album['num_photos'])
         photo_dl = requests.get(photo['src'])
 
         with open(filename, "wb") as photo_file:
