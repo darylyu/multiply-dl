@@ -1,0 +1,2 @@
+multiply-dl
+requests>=0.14.1
