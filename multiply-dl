@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+"""
+multiply-dl is a tool for downloading all your
+old albums on Multiply.
+
+It will be useless starting December 2012.
+"""
+
 import getpass
 import requests
 import os
