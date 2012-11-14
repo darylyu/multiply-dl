@@ -18,6 +18,85 @@ def get_album_count():
     return r['total_items'] - 1
 
 
+def generate_context(album):
+    """
+    This creates an HTML file containing all the comments in the
+    original Multiply page.
+    """
+
+    html_header = """
+    <html>
+    <head><title>%s</title></head>
+    """ % album['subject']
+
+    html_body = """
+    <body>
+    <h1>%s</h1>
+    <p>
+
+    Description: %s
+    </p>
+    """ % (album['subject'], album['body'])
+
+    replies =[]
+
+    # Generate the album comments.
+    if album['num_replies'] > 0:
+        replies = [reply['value'] for reply in album['replies']]
+    for reply in replies:
+        if 'deleted' in reply:
+            html_body += "<li>%s</li>" % reply['body']
+        else:
+            html_body += "<li>%s: %s</li>" % (reply['owner_id'], reply['body'])
+
+
+    i = 0
+
+    # Generate an ugly album.
+    for photo_item in album['photos']:
+        i += 1
+        filename = "%03d.jpg" % i
+        photo = photo_item['value']
+        caption = photo['caption']
+
+        html_body += """
+        <p>
+        <a href="%s">
+        <img src="%s" height="300">
+        </a>
+        <br>Caption: %s</br>
+        """ % (filename, filename, caption)
+
+        # Generate the photo comments.
+        # It's a Multiply bug...
+        # In some cases(I don't know what), it correctly
+        # gives the number of replies, but not the list
+        # of replies.
+        if photo['num_replies'] > 0 and 'replies' in photo:
+            replies = [reply['value'] for reply in photo['replies']]
+        else:
+            replies = []
+
+        for reply in replies:
+            if 'deleted' in reply:
+                html_body += "<li>%s</li>" % reply['body']
+            else:
+                html_body += "<li>%s: %s</li>" % (reply['owner_id'], reply['body'])
+
+        html_body += "</p>"
+
+    html_footer = """
+    </html>
+    """
+
+    index_html = html_header + html_body + html_footer
+
+    filename = "%s/index.html" % album['subject'].replace("/", "")
+
+    with open(filename, "w") as photo_file:
+        photo_file.write(index_html)
+
+
 def get_album(album_index):
     """
     Accepts the album's index in our global list named albums.
@@ -41,6 +120,8 @@ def get_album(album_index):
     album_name = album['subject'].replace("/", "")
     if not os.path.exists(album_name):
         os.mkdir(album_name)
+
+    generate_context(album)
 
     for photo_item in album['photos']:
         i += 1
