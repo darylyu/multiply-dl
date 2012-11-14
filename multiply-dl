@@ -142,7 +142,8 @@ def get_album(album_index):
             continue
 
         photo = photo_item['value']
-        print "Downloading: %s - %03d/%03d" % (album_name, i, album['num_photos'])
+        print "Downloading: %s - %03d/%03d" % (
+            album_name, i, album['num_photos'])
         photo_dl = requests.get(photo['src'])
 
         with open(filename, "wb") as photo_file:
