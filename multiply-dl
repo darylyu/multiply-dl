@@ -39,11 +39,9 @@ def generate_context(album):
     html_body = """
     <body>
     <h1>%s</h1>
-    <p>
-
-    Description: %s
-    </p>
-    """ % (album['subject'], album['body'])
+    <p>Description: %s</p>
+    <p>Created date: %s</p>
+    """ % (album['subject'], album['body'], album['created_date'])
 
     replies =[]
 
